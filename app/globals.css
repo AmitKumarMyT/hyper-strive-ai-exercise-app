@@ -1,0 +1,40 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme {
+  --color-primary: #f3ffca;
+  --color-primary-container: #cafd00;
+  --color-secondary: #bf81ff;
+  --color-tertiary: #00d4ec;
+  --color-surface: #0c0e12;
+  --color-surface-container-low: #111318;
+  --color-surface-container-high: #1d2025;
+  --color-surface-container-highest: #23262c;
+  --color-on-surface: #f6f6fc;
+  --color-on-surface-variant: #aaabb0;
+  
+  --font-headline: var(--font-lexend);
+  --font-body: var(--font-manrope);
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-[#1d2025]/60 backdrop-blur-[20px] border border-[#f6f6fc]/5;
+  }
+  .kinetic-gradient {
+    @apply bg-gradient-to-br from-primary to-secondary;
+  }
+  .text-glow {
+    text-shadow: 0 0 20px rgba(202, 253, 0, 0.3);
+  }
+  .luminescent-shadow {
+    box-shadow: 0 0 32px rgba(191, 129, 255, 0.15);
+  }
+}
+
+body {
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+  font-family: var(--font-body);
+  min-height: 100dvh;
+}

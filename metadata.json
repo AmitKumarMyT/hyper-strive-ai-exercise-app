@@ -1,0 +1,5 @@
+{
+  "name": "HyperStrive AI",
+  "description": "AI-powered hypertrophy and nutrition tracker. Focuses on body weight and dumbbell exercises for maximum hypertrophy. Tracks daily calorie and protein intake.",
+  "requestFramePermissions": ["camera"]
+}
