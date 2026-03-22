@@ -1,10 +1,35 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'motion/react';
-import { Flame, Gift, ChevronLeft, ChevronRight, UserPlus } from 'lucide-react';
+import { Flame, Gift, ChevronLeft, ChevronRight, UserPlus, Target, Edit2, Check } from 'lucide-react';
 import Image from 'next/image';
+import { useAppStore } from '@/components/AppProvider';
 
 export default function ProfilePage() {
+  const { dailyCaloriesGoal, setDailyCaloriesGoal, dailyProteinGoal, setDailyProteinGoal } = useAppStore();
+  const [isEditingGoals, setIsEditingGoals] = useState(false);
+  const [tempCalories, setTempCalories] = useState(dailyCaloriesGoal.toString());
+  const [tempProtein, setTempProtein] = useState(dailyProteinGoal.toString());
+
+  const handleSaveGoals = () => {
+    const newCalories = parseInt(tempCalories, 10);
+    const newProtein = parseInt(tempProtein, 10);
+    
+    if (!isNaN(newCalories) && newCalories > 0) {
+      setDailyCaloriesGoal(newCalories);
+    } else {
+      setTempCalories(dailyCaloriesGoal.toString());
+    }
+    
+    if (!isNaN(newProtein) && newProtein > 0) {
+      setDailyProteinGoal(newProtein);
+    } else {
+      setTempProtein(dailyProteinGoal.toString());
+    }
+    
+    setIsEditingGoals(false);
+  };
   return (
     <div className="space-y-8 pb-12">
       {/* Hero: Athlete Rank & Points */}
@@ -56,6 +81,84 @@ export default function ProfilePage() {
           <button className="mt-4 bg-surface text-on-surface px-6 py-2 rounded-full font-bold text-sm hover:scale-105 transition-transform">
             Redeem
           </button>
+        </div>
+      </section>
+
+      {/* Daily Goals Section */}
+      <section className="space-y-4">
+        <div className="flex justify-between items-end">
+          <div>
+            <h3 className="text-2xl font-black font-headline uppercase italic">Daily Targets</h3>
+            <p className="text-on-surface-variant text-sm font-medium">Customize your macro goals</p>
+          </div>
+          <button 
+            onClick={() => isEditingGoals ? handleSaveGoals() : setIsEditingGoals(true)}
+            className="w-10 h-10 rounded-xl bg-surface-container-high flex items-center justify-center hover:bg-surface-container-highest transition-colors text-primary"
+          >
+            {isEditingGoals ? <Check size={20} /> : <Edit2 size={20} />}
+          </button>
+        </div>
+
+        <div className="glass-panel rounded-[32px] p-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-surface-container-low rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
+              <div className="absolute -right-4 -top-4 w-24 h-24 bg-primary/10 blur-2xl rounded-full" />
+              <div className="flex items-center gap-3 mb-4 relative z-10">
+                <div className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary">
+                  <Target size={20} />
+                </div>
+                <span className="text-on-surface-variant font-body text-xs font-bold tracking-widest uppercase">
+                  Calories
+                </span>
+              </div>
+              
+              {isEditingGoals ? (
+                <div className="relative z-10 flex items-baseline gap-2">
+                  <input 
+                    type="number" 
+                    value={tempCalories}
+                    onChange={(e) => setTempCalories(e.target.value)}
+                    className="bg-surface-container-highest border-none rounded-xl py-2 px-4 text-3xl font-black font-headline text-primary w-32 focus:ring-2 focus:ring-primary/50 outline-none"
+                  />
+                  <span className="text-on-surface-variant font-bold text-sm">kcal</span>
+                </div>
+              ) : (
+                <div className="relative z-10 flex items-baseline gap-2">
+                  <span className="font-headline font-black text-4xl text-primary">{dailyCaloriesGoal}</span>
+                  <span className="text-on-surface-variant font-bold text-sm">kcal</span>
+                </div>
+              )}
+            </div>
+
+            <div className="bg-surface-container-low rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
+              <div className="absolute -right-4 -top-4 w-24 h-24 bg-secondary/10 blur-2xl rounded-full" />
+              <div className="flex items-center gap-3 mb-4 relative z-10">
+                <div className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-secondary">
+                  <Target size={20} />
+                </div>
+                <span className="text-on-surface-variant font-body text-xs font-bold tracking-widest uppercase">
+                  Protein
+                </span>
+              </div>
+              
+              {isEditingGoals ? (
+                <div className="relative z-10 flex items-baseline gap-2">
+                  <input 
+                    type="number" 
+                    value={tempProtein}
+                    onChange={(e) => setTempProtein(e.target.value)}
+                    className="bg-surface-container-highest border-none rounded-xl py-2 px-4 text-3xl font-black font-headline text-secondary w-32 focus:ring-2 focus:ring-secondary/50 outline-none"
+                  />
+                  <span className="text-on-surface-variant font-bold text-sm">g</span>
+                </div>
+              ) : (
+                <div className="relative z-10 flex items-baseline gap-2">
+                  <span className="font-headline font-black text-4xl text-secondary">{dailyProteinGoal}</span>
+                  <span className="text-on-surface-variant font-bold text-sm">g</span>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </section>
 
