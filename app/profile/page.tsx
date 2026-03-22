@@ -2,15 +2,45 @@
 
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { Flame, Gift, ChevronLeft, ChevronRight, UserPlus, Target, Edit2, Check } from 'lucide-react';
+import { Flame, Gift, ChevronLeft, ChevronRight, UserPlus, Target, Edit2, Check, Loader2, Zap } from 'lucide-react';
 import Image from 'next/image';
 import { useAppStore } from '@/components/AppProvider';
 
 export default function ProfilePage() {
-  const { dailyCaloriesGoal, setDailyCaloriesGoal, dailyProteinGoal, setDailyProteinGoal } = useAppStore();
+  const { user, login, logout, isAuthReady, dailyCaloriesGoal, setDailyCaloriesGoal, dailyProteinGoal, setDailyProteinGoal } = useAppStore();
   const [isEditingGoals, setIsEditingGoals] = useState(false);
   const [tempCalories, setTempCalories] = useState(dailyCaloriesGoal.toString());
   const [tempProtein, setTempProtein] = useState(dailyProteinGoal.toString());
+
+  if (!isAuthReady) {
+    return (
+      <div className="flex items-center justify-center min-h-[70vh]">
+        <Loader2 className="animate-spin text-primary" size={48} />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[70vh] space-y-8 px-4 text-center">
+        <div className="w-24 h-24 rounded-full bg-surface-container-high flex items-center justify-center text-primary mb-4 shadow-[0_0_40px_rgba(202,253,0,0.2)]">
+          <UserPlus size={48} className="fill-current" />
+        </div>
+        <h1 className="text-4xl font-black font-headline uppercase tracking-tighter italic">Profile</h1>
+        <p className="text-on-surface-variant font-medium max-w-sm">
+          Sign in to view your profile, track your progress, and set your goals.
+        </p>
+        <motion.button 
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={login}
+          className="w-full max-w-sm h-16 bg-primary-container text-on-primary-container rounded-2xl font-black font-headline uppercase tracking-widest text-lg shadow-[0_8px_32px_rgba(202,253,0,0.2)] flex items-center justify-center gap-3"
+        >
+          Sign in with Google
+        </motion.button>
+      </div>
+    );
+  }
 
   const handleSaveGoals = () => {
     const newCalories = parseInt(tempCalories, 10);
@@ -275,6 +305,16 @@ export default function ProfilePage() {
             </button>
           </div>
         </div>
+      </section>
+
+      {/* Logout Section */}
+      <section className="pt-8 border-t border-white/5 flex justify-center">
+        <button 
+          onClick={logout}
+          className="text-error hover:text-error/80 font-bold uppercase tracking-widest text-xs transition-colors"
+        >
+          Sign Out
+        </button>
       </section>
     </div>
   );

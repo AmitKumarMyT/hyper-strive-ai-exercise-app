@@ -9,7 +9,7 @@ import { useAppStore } from '@/components/AppProvider';
 import { GoogleGenAI, Type } from '@google/genai';
 
 export default function Home() {
-  const { meals, addMeal, setMeals, dailyCaloriesGoal, setDailyCaloriesGoal, dailyProteinGoal, setDailyProteinGoal } = useAppStore();
+  const { user, login, isAuthReady, meals, addMeal, setMeals, dailyCaloriesGoal, setDailyCaloriesGoal, dailyProteinGoal, setDailyProteinGoal } = useAppStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isManualModalOpen, setIsManualModalOpen] = useState(false);
@@ -25,6 +25,36 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+
+  if (!isAuthReady) {
+    return (
+      <div className="flex items-center justify-center min-h-[70vh]">
+        <Loader2 className="animate-spin text-primary" size={48} />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[70vh] space-y-8 px-4 text-center">
+        <div className="w-24 h-24 rounded-full bg-surface-container-high flex items-center justify-center text-primary mb-4 shadow-[0_0_40px_rgba(202,253,0,0.2)]">
+          <Zap size={48} className="fill-current" />
+        </div>
+        <h1 className="text-4xl font-black font-headline uppercase tracking-tighter italic">HyperStrive AI</h1>
+        <p className="text-on-surface-variant font-medium max-w-sm">
+          Sign in to track your nutrition, generate hypertrophy workouts, and achieve your fitness goals.
+        </p>
+        <motion.button 
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={login}
+          className="w-full max-w-sm h-16 bg-primary-container text-on-primary-container rounded-2xl font-black font-headline uppercase tracking-widest text-lg shadow-[0_8px_32px_rgba(202,253,0,0.2)] flex items-center justify-center gap-3"
+        >
+          Sign in with Google
+        </motion.button>
+      </div>
+    );
+  }
 
   const consumedCalories = meals.reduce((sum, m) => sum + m.calories, 0);
   const consumedProtein = meals.reduce((sum, m) => sum + m.protein, 0);
@@ -167,9 +197,7 @@ export default function Home() {
   };
 
   const clearLog = () => {
-    if (confirm('Are you sure you want to clear today\'s log?')) {
-      setMeals([]);
-    }
+    setMeals([]);
   };
 
   return (

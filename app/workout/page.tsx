@@ -19,7 +19,7 @@ declare global {
 }
 
 export default function WorkoutPage() {
-  const { workoutPlan, setWorkoutPlan, credits, setCredits, exerciseVisuals, setExerciseVisual } = useAppStore();
+  const { user, login, isAuthReady, workoutPlan, setWorkoutPlan, credits, setCredits, exerciseVisuals, setExerciseVisual } = useAppStore();
   const router = useRouter();
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGeneratingVisual, setIsGeneratingVisual] = useState(false);
@@ -68,7 +68,37 @@ export default function WorkoutPage() {
       setSetTimeElapsed(0);
     }
     return () => clearTimeout(timer);
-  }, [isResting, timeLeft, workoutPlan, isGenerating, currentExerciseIndex]);
+  }, [isResting, timeLeft, workoutPlan, isGenerating, currentExerciseIndex, isWorkoutComplete]);
+
+  if (!isAuthReady) {
+    return (
+      <div className="flex items-center justify-center min-h-[70vh]">
+        <Loader2 className="animate-spin text-primary" size={48} />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[70vh] space-y-8 px-4 text-center">
+        <div className="w-24 h-24 rounded-full bg-surface-container-high flex items-center justify-center text-primary mb-4 shadow-[0_0_40px_rgba(202,253,0,0.2)]">
+          <Dumbbell size={48} className="fill-current" />
+        </div>
+        <h1 className="text-4xl font-black font-headline uppercase tracking-tighter italic">Workout AI</h1>
+        <p className="text-on-surface-variant font-medium max-w-sm">
+          Sign in to generate and track your personalized hypertrophy workouts.
+        </p>
+        <motion.button 
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={login}
+          className="w-full max-w-sm h-16 bg-primary-container text-on-primary-container rounded-2xl font-black font-headline uppercase tracking-widest text-lg shadow-[0_8px_32px_rgba(202,253,0,0.2)] flex items-center justify-center gap-3"
+        >
+          Sign in with Google
+        </motion.button>
+      </div>
+    );
+  }
 
   const handleGenerateWorkout = async () => {
     setIsGenerating(true);
@@ -350,14 +380,13 @@ export default function WorkoutPage() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => {
-              // Reset for a new session if they want to see the summary again or start over
               setWorkoutPlan(null);
               setIsWorkoutComplete(false);
             }}
             className="w-full h-14 bg-transparent border-2 border-white/10 text-on-surface rounded-2xl font-bold font-headline uppercase tracking-widest text-sm flex items-center justify-center gap-3"
           >
-            <BarChart3 size={18} />
-            View Summary
+            <Dumbbell size={18} />
+            Start New Workout
           </motion.button>
         </div>
       </div>
